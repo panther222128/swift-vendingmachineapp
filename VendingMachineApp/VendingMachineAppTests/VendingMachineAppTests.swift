@@ -1,11 +1,12 @@
 //
-//  VendingMachine.swift
-//  Test
+//  VendingMachineAppTests.swift
+//  VendingMachineAppTests
 //
-//  Created by Jun Ho JANG on 2021/03/03.
+//  Created by Jun Ho JANG on 2021/03/12.
 //
 
 import XCTest
+
 @testable import VendingMachineApp
 
 class VendingMachineTest: XCTestCase {
@@ -23,7 +24,7 @@ class VendingMachineTest: XCTestCase {
         vendingMachine.addCash(cash: cash)
         let expectation = 100
         
-        XCTAssertEqual(expectation, vendingMachine.showAccount(), "Panther")
+        XCTAssertEqual(expectation, vendingMachine.showAccount())
     }
     
     
@@ -37,7 +38,7 @@ class VendingMachineTest: XCTestCase {
         let cash = 100
         let result = vendingMachine.insertCash(cash: cash)
         
-        XCTAssertEqual(result, vendingMachine.showAccount(), "Panther")
+        XCTAssertEqual(result, vendingMachine.showAccount())
     }
     
     
@@ -50,7 +51,7 @@ class VendingMachineTest: XCTestCase {
         vendingMachine.addCash(cash: secondCash)
         let expectation = 200
         
-        XCTAssertEqual(expectation, vendingMachine.showAccount(), "Panther")
+        XCTAssertEqual(expectation, vendingMachine.showAccount())
     }
     
     
@@ -63,7 +64,7 @@ class VendingMachineTest: XCTestCase {
         }
         let expectation = [target1]
         
-        XCTAssertEqual(expectation, vendingMachine.showInventory(), "Panther")
+        XCTAssertEqual(expectation, vendingMachine.showInventory())
     }
     
     
@@ -90,7 +91,7 @@ class VendingMachineTest: XCTestCase {
         
         let expectation = [target1, target2]
         
-        XCTAssertEqual(expectation, vendingMachine.showPurchasable(), "Panther")
+        XCTAssertEqual(expectation, vendingMachine.showPurchasable())
     }
     
     
@@ -117,7 +118,7 @@ class VendingMachineTest: XCTestCase {
         
         vendingMachine.remove(one: target2!)
         
-        XCTAssertEqual(expectation, vendingMachine.showInventory(), "Panther")
+        XCTAssertEqual(expectation, vendingMachine.showInventory())
     }
     
     
@@ -144,23 +145,23 @@ class VendingMachineTest: XCTestCase {
         
         // 판매 후 제거 확인
         vendingMachine.sell(one: target2!)
-        XCTAssertEqual(expectation1, vendingMachine.showInventory(), "Panther")
+        XCTAssertEqual(expectation1, vendingMachine.showInventory())
         
         // 구매이력을 통한 구매 확인
         let expectation2 = [target2]
-        XCTAssertEqual(expectation2, vendingMachine.showHistory(), "Panther")
+        XCTAssertEqual(expectation2, vendingMachine.showHistory())
     }
     
     
     
     func testShowAccount_Success() {
-        XCTAssertEqual(0, vendingMachine.showAccount(), "Panther")
+        XCTAssertEqual(0, vendingMachine.showAccount())
     }
     
     
     
     func testShowInventory_Success() {
-        XCTAssertEqual([Beverage](), vendingMachine.showInventory(), "Panther")
+        XCTAssertEqual([Beverage](), vendingMachine.showInventory())
     }
     
     
@@ -173,7 +174,7 @@ class VendingMachineTest: XCTestCase {
             vendingMachine.addBeverage(beverage: cantataLatte)
         }
         
-        XCTAssertEqual(false, vendingMachine.showInventory()[0].isNotExpired(), "Panther")
+        XCTAssertEqual(false, vendingMachine.showInventory()[0].isNotExpired())
     }
     
     
@@ -198,7 +199,7 @@ class VendingMachineTest: XCTestCase {
         
         let expectation = [target1]
         
-        XCTAssertEqual(expectation, vendingMachine.hotBeverage(), "Panther")
+        XCTAssertEqual(expectation, vendingMachine.hotBeverage())
     }
     
     
@@ -226,11 +227,11 @@ class VendingMachineTest: XCTestCase {
         
         let expectation1 = [target2, target3]
         
-        XCTAssertEqual(expectation1, vendingMachine.showHistory(), "Panther")
+        XCTAssertEqual(expectation1, vendingMachine.showHistory())
         
         let expectation2 = [target1]
         
-        XCTAssertEqual(expectation2, vendingMachine.showInventory(), "Panther")
+        XCTAssertEqual(expectation2, vendingMachine.showInventory())
     }
 
     // 특정 제품 개수 확인
@@ -252,7 +253,41 @@ class VendingMachineTest: XCTestCase {
         
         let expectation = 3
         
-        XCTAssertEqual(expectation, vendingMachine.countSKUQuantity(CantataLatte.self), "Panther")
+        XCTAssertEqual(expectation, vendingMachine.countSKUQuantity(CantataLatte.self))
+        
+    }
+    
+    func testCountQuant() {
+        let target1 = CoffeeFactory.addBeverage(type: CantataLatte.self, manufacturedAt: Date(), expiration: Date())
+        if let cantataLatte = target1 {
+            vendingMachine.addBeverage(beverage: cantataLatte)
+        }
+        
+        let target2 = CoffeeFactory.addBeverage(type: CantataLatte.self, manufacturedAt: Date(), expiration: Date())
+        if let cantataLatte = target2 {
+            vendingMachine.addBeverage(beverage: cantataLatte)
+        }
+        
+        let target3 = CoffeeFactory.addBeverage(type: CantataLatte.self, manufacturedAt: Date(), expiration: Date())
+        if let cantataLatte = target3 {
+            vendingMachine.addBeverage(beverage: cantataLatte)
+        }
+        
+        let expectation = 3
+        
+        XCTAssertEqual(expectation, vendingMachine.count(sku: CantataLatte.self))
+        
+    }
+    
+    func testNewFactory() {
+        
+        let target = InstanceCreator.createInstance(sku: CantataLatte.self)!
+        
+        vendingMachine.addBeverage(beverage: target)
+        
+        let expectation = [target]
+        
+        XCTAssertEqual(expectation, vendingMachine.showInventory())
         
     }
 
